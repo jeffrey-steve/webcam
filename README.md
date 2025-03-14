@@ -1,13 +1,15 @@
-# SneakySnap
 
-SneakySnap is a Python-based application designed to capture webcam photos at user-defined intervals and send them to a Discord webhook. It features a clean GUI for configuration and a robust backend for processing, with detailed logging for transparency and debugging.
+# Snapper
+
+Snapperis a Python-based application designed to capture webcam photos at user-defined intervals and send them to a Discord webhook. It features a  GUI for configuration and a backend for processing, with  logging for transparency and debugging.
+
 
 ## Features
-- **Customizable Delay**: Set the interval (in seconds) between photo captures.
-- **Dynamic Webhook**: Input and test your Discord webhook URL within the app.
-- **Continuous Capture**: Loop photo capture until manually stopped.
-- **Professional Logging**: Detailed logs saved to `SneakySnap.log` and displayed in the GUI.
-- **Modular Design**: Separates frontend (`SneakySnapGUI.py`) and backend (`SneakySnapBackend.py`) for maintainability.
+
+- Customizable Delay
+- Dynamic Webhook
+- Continuous Capture
+
 
 ## Installation
 
@@ -20,12 +22,22 @@ Install the necessary dependencies via pip:
 ```bash
 pip install opencv-python requests tkinter pyinstaller
 ```
-Setup
-Clone the Repository
+
+## Setup
+#### Clone the Repository:
 ```bash
-git clone https://github.com/jeffrey-steve/SneakySnap.git
+git clone https://github.com/jeffrey-steve/webcam.git
 cd SneakySnap
+```
+#### Verify Installation:
+Ensure Python and libraries are installed:
+```bash
+python --version
+pip list
 ```
 
 
 
+
+
+    
