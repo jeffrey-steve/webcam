@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox
 import SneakySnapBackend as backend
 
 class SneakySnapGUI:
@@ -7,33 +8,38 @@ class SneakySnapGUI:
         self.root = root
         self.root.title("SneakySnap Application")
 
-        # Initialize UI elements first
+        # Webhook Input
+        self.webhook_label = tk.Label(root, text="Discord Webhook URL:")
+        self.webhook_label.pack(pady=5)
+        self.webhook_entry = tk.Entry(root, width=50)
+        self.webhook_entry.pack(pady=5)
+        self.test_webhook_button = tk.Button(root, text="Test Webhook", command=self.test_webhook)
+        self.test_webhook_button.pack(pady=5)
+
+        # Delay Input
         self.delay_label = tk.Label(root, text="Delay Between Photos (seconds):")
         self.delay_label.pack(pady=5)
-
-        self.delay_slider = ttk.Scale(root, from_=1, to=60, orient=tk.HORIZONTAL, length=300)
-        self.delay_slider.set(5)  # Default 5 seconds
-        self.delay_slider.pack(pady=5)
-
-        self.delay_value = tk.Label(root, text=f"Current Delay: {int(self.delay_slider.get())} seconds")
-        self.delay_slider.bind("<Motion>", lambda e: self.update_delay_label())
+        self.delay_entry = tk.Entry(root, width=10)
+        self.delay_entry.insert(0, "5")  # Default 5 seconds
+        self.delay_entry.pack(pady=5)
+        self.set_delay_button = tk.Button(root, text="Set Delay", command=self.set_delay)
+        self.set_delay_button.pack(pady=5)
+        self.delay_value = tk.Label(root, text="Current Delay: 5 seconds")
         self.delay_value.pack(pady=5)
 
-        self.start_button = tk.Button(root, text="Start Capture", command=self.start_capture)
+        # Control Buttons
+        self.start_button = tk.Button(root, text="Start Capture", command=self.start_capture, state=tk.DISABLED)
         self.start_button.pack(pady=10)
-
         self.stop_button = tk.Button(root, text="Stop Capture", command=self.stop_capture, state=tk.DISABLED)
         self.stop_button.pack(pady=10)
 
+        # Log Display
         self.log_text = tk.Text(root, height=10, width=60, state=tk.DISABLED)
         self.log_text.pack(pady=10)
 
-        # Now initialize backend with log callback
+        # Backend Initialization
         self.backend = backend.SneakySnapBackend(self.log_callback)
         self.log_callback("Application initialized and ready.")
-
-    def update_delay_label(self):
-        self.delay_value.config(text=f"Current Delay: {int(self.delay_slider.get())} seconds")
 
     def log_callback(self, message):
         self.log_text.config(state=tk.NORMAL)
@@ -41,11 +47,35 @@ class SneakySnapGUI:
         self.log_text.see(tk.END)
         self.log_text.config(state=tk.DISABLED)
 
+    def test_webhook(self):
+        webhook_url = self.webhook_entry.get().strip()
+        if not webhook_url:
+            messagebox.showerror("Error", "Please enter a webhook URL.")
+            return
+        result = self.backend.test_webhook(webhook_url)
+        if result:
+            messagebox.showinfo("Success", "Webhook test successful!")
+            self.start_button.config(state=tk.NORMAL)  # Enable Start only if webhook works
+        else:
+            messagebox.showerror("Error", "Webhook test failed. Check URL and try again.")
+
+    def set_delay(self):
+        try:
+            delay = int(self.delay_entry.get().strip())
+            if delay <= 0:
+                raise ValueError("Delay must be positive.")
+            self.delay_value.config(text=f"Current Delay: {delay} seconds")
+            self.backend.set_delay(delay)
+            self.log_callback(f"Delay set to {delay} seconds.")
+        except ValueError:
+            messagebox.showerror("Error", "Please enter a valid positive number for delay.")
+            self.delay_entry.delete(0, tk.END)
+            self.delay_entry.insert(0, "5")
+
     def start_capture(self):
         self.start_button.config(state=tk.DISABLED)
         self.stop_button.config(state=tk.NORMAL)
-        delay = int(self.delay_slider.get())
-        self.backend.start_capture(delay)
+        self.backend.start_capture(self.webhook_entry.get().strip())
 
     def stop_capture(self):
         self.backend.stop_capture()
