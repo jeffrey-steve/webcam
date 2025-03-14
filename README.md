@@ -24,7 +24,7 @@ Setup
 Clone the Repository
 ```bash
 git clone https://github.com/jeffrey-steve/SneakySnap.git
-cd SneakySnap``
+cd SneakySnap```
 
 
 
